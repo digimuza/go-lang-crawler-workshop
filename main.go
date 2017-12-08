@@ -12,7 +12,7 @@ func main() {
 	go crawler.Crawler(crawler.CrawlLink{"https://rekvizitai.vz.lt/", "https://rekvizitai.vz.lt/"}, crawledLinks)
 
 	for craw := range crawledLinks {
-		fmt.Println(craw)
+		fmt.Println(craw.CrawlLink.URL)
 	}
 
 	close(crawledLinks)

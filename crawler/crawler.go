@@ -16,10 +16,10 @@ type CrawlLink struct {
 
 // SiteCrawl Definition for crawl
 type SiteCrawl struct {
-	CrawledLink CrawlLink
-	StatusCode  int
-	LinksFound  int
-	Links       []string
+	CrawlLink  CrawlLink
+	StatusCode int
+	LinksFound int
+	Links      []string
 }
 
 //We need to check if url is alredy visited // Normal map do not work becouse it's throws concurent read/write

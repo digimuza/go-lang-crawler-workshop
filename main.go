@@ -9,7 +9,7 @@ import (
 func main() {
 
 	crawledLinks := make(chan string, 100)
-	go crawler.Crawler("https://www.knygos.lt/", crawledLinks)
+	go crawler.Crawler("https://rekvizitai.vz.lt/", crawledLinks)
 
 	for craw := range crawledLinks {
 		fmt.Println(craw)

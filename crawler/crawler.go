@@ -37,10 +37,11 @@ func Crawler(crawl CrawlLink, crawledLinks chan SiteCrawl) {
 	//Check if url is visited if not crawl it
 	_, ok := visited.Load(crawl.URL)
 	if !ok && canCrawl(crawl.URL) {
+		visited.Store(crawl.URL, true)
 		resp, err := http.Get(crawl.URL)
 
 		if err == nil {
-			visited.Store(crawl.URL, true)
+
 			linksChannel := make(chan CrawlLink, 10000)
 
 			links := collectlinks.All(resp.Body)

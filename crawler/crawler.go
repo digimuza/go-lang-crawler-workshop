@@ -20,7 +20,6 @@ type SiteCrawl struct {
 	StatusCode  int
 	LinksFound  int
 	Links       []string
-	Loaded      int64
 }
 
 //We need to check if url is alredy visited // Normal map do not work becouse it's throws concurent read/write
@@ -29,27 +28,32 @@ var visited = syncmap.Map{}
 var baseURL = ""
 
 // Crawler function that starsts crawling process
-func Crawler(url string, crawledLinks chan string) {
+func Crawler(crawl CrawlLink, crawledLinks chan SiteCrawl) {
 
 	if baseURL == "" {
-		baseURL = url
+		baseURL = crawl.URL
 	}
 
 	//Check if url is visited if not crawl it
-	_, ok := visited.Load(url)
-	if !ok && canCrawl(url) {
-		resp, err := http.Get(url)
+	_, ok := visited.Load(crawl.URL)
+	if !ok && canCrawl(crawl.URL) {
+		resp, err := http.Get(crawl.URL)
 
 		if err == nil {
-			visited.Store(url, true)
-			linksChannel := make(chan string, 10000)
+			visited.Store(crawl.URL, true)
+			linksChannel := make(chan CrawlLink, 10000)
 
 			links := collectlinks.All(resp.Body)
 
-			crawledLinks <- url
+			crawledLinks <- SiteCrawl{
+				crawl,
+				resp.StatusCode,
+				len(links),
+				links,
+			}
 
 			for _, link := range links {
-				go Crawler(link, crawledLinks)
+				go Crawler(CrawlLink{crawl.URL, link}, crawledLinks)
 			}
 
 			close(linksChannel)
